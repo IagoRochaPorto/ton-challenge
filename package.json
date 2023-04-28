@@ -1,0 +1,18 @@
+{
+  "name": "my-first-serverless",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.114",
+    "serverless": "^3.30.1",
+    "serverless-plugin-typescript": "^2.1.4",
+    "typescript": "^5.0.4"
+  }
+}
