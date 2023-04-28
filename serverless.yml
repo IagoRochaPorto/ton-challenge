@@ -1,0 +1,22 @@
+service: sls-my-first-service
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  memorySize: 128
+  timeout: 3
+  httpApi:
+    cors: true
+
+functions:
+  usersApi:
+    name: ${sls:stage}-users-lambda
+    handler: functions/usersApi.handler
+    description: users api
+    events:
+      - http:
+          path: /
+          method: any
+          cors: true
