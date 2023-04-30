@@ -1,5 +1,6 @@
 import { DynamoDB, ScanCommandInput } from '@aws-sdk/client-dynamodb'
 import { User } from '../user'
+import { NotFoundError } from '../errors'
 
 type GetUsersParams = {
   stage: string
@@ -12,8 +13,11 @@ export async function getUsers(params: GetUsersParams): Promise<Pick<User, 'user
     TableName: `${stage}-users`,
     ProjectionExpression: 'username',
   }
-  const { Items: users = [] } = await db.scan(options)
+  const { Items: users } = await db.scan(options)
 
+  if (!users?.length) {
+    throw new NotFoundError('Users not found')
+  }
   return users
     .filter((user) => user.username.S)
     .map((user) => ({

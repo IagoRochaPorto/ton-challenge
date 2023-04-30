@@ -3,7 +3,7 @@ import { User } from '../user'
 import { compareSync } from 'bcryptjs'
 import { BadRequestError, NotFoundError, UnauthorizedError } from '../errors'
 
-type AuthUserParams = Partial<Pick<User, 'username' | 'password'>>
+export type AuthUserParams = Partial<Pick<User, 'username' | 'password'>>
 
 export async function authUser(stage: string, db: DynamoDB, user: AuthUserParams) {
   if (!user.password) {
@@ -16,7 +16,7 @@ export async function authUser(stage: string, db: DynamoDB, user: AuthUserParams
     ExpressionAttributeValues: {
       ':username': { S: user.username! },
     },
-    ProjectionExpression: 'username, password, userId, email',
+    ProjectionExpression: 'username, password, id, email',
   })
 
   if (!users?.length) {
@@ -26,7 +26,7 @@ export async function authUser(stage: string, db: DynamoDB, user: AuthUserParams
   const authenticatedUser = users[0]
 
   if (!authenticatedUser.password?.S) {
-    throw new UnauthorizedError('Invalid password')
+    throw new BadRequestError('User not found')
   }
 
   const isPasswordValid = compareSync(user.password, authenticatedUser.password.S)
@@ -35,9 +35,13 @@ export async function authUser(stage: string, db: DynamoDB, user: AuthUserParams
     throw new UnauthorizedError('Invalid password')
   }
 
+  if (!authenticatedUser.id?.S || !authenticatedUser.username?.S || !authenticatedUser.email?.S) {
+    throw new BadRequestError('User not found')
+  }
+
   return {
-    userId: authenticatedUser.userId?.S,
-    username: authenticatedUser.username?.S,
-    email: authenticatedUser.email?.S,
+    id: authenticatedUser.id.S,
+    username: authenticatedUser.username.S,
+    email: authenticatedUser.email.S,
   }
 }
