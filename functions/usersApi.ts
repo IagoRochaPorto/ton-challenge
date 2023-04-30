@@ -1,30 +1,64 @@
-import { APIGatewayEvent, Context, Callback } from "aws-lambda";
-import { DynamoDB } from "@aws-sdk/client-dynamodb";
-import { getUsers } from "./helpers";
+import { APIGatewayEvent, Context, Callback } from 'aws-lambda'
+import { DynamoDB } from '@aws-sdk/client-dynamodb'
+import { addUser, authUser, getUsers } from './useCases'
+import { BadRequestError, NotFoundError, UnauthorizedError } from './errors'
+import { User } from './user'
 
-const db = new DynamoDB({ region: "us-east-1" });
+const db = new DynamoDB({ region: process.env.AWS_REGION })
 
-exports.handler = async function (
-  event: APIGatewayEvent,
-  context: Context,
-  callback: Callback
-) {
+exports.handler = async function (event: APIGatewayEvent, _context: Context, callback: Callback) {
   try {
-    const { httpMethod: method, stage } = event.requestContext;
+    const { requestContext, body, queryStringParameters } = event
+    const { httpMethod, stage, path } = requestContext
 
-    if (method === "GET") {
-      const users = await getUsers(stage, db);
-      return {
-        statusCode: 200,
-        body: JSON.stringify(users),
-      };
+    switch (httpMethod) {
+      case 'POST':
+        if (!body) {
+          throw new BadRequestError('Missing body')
+        }
+        const parsedBody = JSON.parse(body) as Partial<User>
+        if (path === '/auth') {
+          const user = {
+            username: parsedBody.username,
+            password: queryStringParameters?.password,
+          }
+          const authenticatedUser = await authUser(stage, db, user)
+          callback(null, { statusCode: 200, body: JSON.stringify(authenticatedUser) })
+        }
+        if (path === '/user') {
+          const parsedUser = {
+            email: parsedBody.email,
+            username: parsedBody.username,
+            password: parsedBody.password,
+          }
+          const createdUser = await addUser(stage, db, { user: parsedUser })
+          callback(null, { statusCode: 201, body: JSON.stringify(createdUser) })
+        }
+        break
+
+      case 'GET':
+        const users = await getUsers({ db, stage })
+        callback(null, { statusCode: 200, body: JSON.stringify(users) })
+        break
+      default:
+        throw new BadRequestError('Invalid method')
+    }
+  } catch (error) {
+    if (error instanceof BadRequestError) {
+      callback(null, { statusCode: 400, body: JSON.stringify({ message: error.message }) })
+      return
     }
 
-    return {
-      statusCode: 404,
-      body: JSON.stringify({ message: "Not Found" }),
-    };
-  } catch (error) {
-    console.log(error);
+    if (error instanceof NotFoundError) {
+      callback(null, { statusCode: 404, body: JSON.stringify({ message: error.message }) })
+      return
+    }
+
+    if (error instanceof UnauthorizedError) {
+      callback(null, { statusCode: 401, body: JSON.stringify({ message: error.message }) })
+      return
+    }
+
+    callback(error, { statusCode: 500, body: JSON.stringify({ message: 'Internal server error' }) })
   }
-};
+}
