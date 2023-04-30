@@ -17,7 +17,7 @@ export async function addUser(stage: string, db: DynamoDB, params: AddUserParams
   }
 
   const hashedPassword = hashSync(user.password, 12)
-  const createdUser = await db.putItem({
+  await db.putItem({
     TableName: `${stage}-users`,
     Item: {
       userId: { S: randomUUID() },
