@@ -33,14 +33,29 @@ functions:
           path: /user
           method: POST
           cors: true
+          bodyType: 'AddUserRequest'
+          responseData:
+            '201':
+              description: OK
+              bodyType: 'AddUserResponse'
       - http:
           path: /auth
           method: POST
           cors: true
+          bodyType: 'AuthUserRequest'
+          responseData:
+            '200':
+              description: OK
+              bodyType: 'AuthUserResponse'
       - http:
           path: /user
           method: GET
           cors: true
+          responseData:
+            '200':
+              description: OK
+              bodyType: 'GetUsersResponse'
+
   accessApi:
     name: ${sls:stage}-access-lambda
     handler: functions/accessLambda/accessApi.handler
@@ -50,10 +65,18 @@ functions:
           path: /access
           method: POST
           cors: true
+          bodyType: 'IncrementAccessesRequest'
+          responseData:
+            '201':
+              description: OK
       - http:
           path: /access
           method: GET
           cors: true
+          responseData:
+            '200':
+              description: OK
+              bodyType: 'GetAccessesResponse'
 
 resources:
   Resources:
@@ -88,9 +111,13 @@ custom:
   dynamodb:
     stages:
       - dev
+  autoswagger:
+    typefiles:
+      - ./api-types.d.ts
 
 plugins:
   - serverless-plugin-typescript
   - serverless-offline
   - serverless-dotenv-plugin
   - serverless-dynamodb-local
+  - serverless-auto-swagger

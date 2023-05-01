@@ -29,10 +29,7 @@ exports.handler = async function (event: APIGatewayEvent, _context: Context, cal
           increment: parsedBody.increment,
         })
 
-        callback(null, {
-          statusCode: 201,
-          body: JSON.stringify({ message: 'Accesses incremented' }),
-        })
+        callback(null, { statusCode: 201 })
         break
       case 'GET':
         const accesses = await getAccesses({ stage, db })

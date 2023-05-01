@@ -41,7 +41,7 @@ exports.handler = async function (event: APIGatewayEvent, _context: Context, cal
 
       case 'GET':
         const users = await getUsers({ stage, db })
-        callback(null, { statusCode: 200, body: JSON.stringify(users) })
+        callback(null, { statusCode: 200, body: JSON.stringify({ users }) })
         break
       default:
         throw new BadRequestError('Invalid method')
