@@ -64,13 +64,9 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
-          - AttributeName: username
-            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
-          - AttributeName: username
-            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -81,13 +77,9 @@ resources:
         AttributeDefinitions:
           - AttributeName: role
             AttributeType: S
-          - AttributeName: quantity
-            AttributeType: 'N'
         KeySchema:
           - AttributeName: role
             KeyType: HASH
-          - AttributeName: quantity
-            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
