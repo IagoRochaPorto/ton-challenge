@@ -41,6 +41,19 @@ functions:
           path: /user
           method: GET
           cors: true
+  accessApi:
+    name: ${sls:stage}-access-lambda
+    handler: functions/accessLambda/accessApi.handler
+    description: access api
+    events:
+      - http:
+          path: /access
+          method: POST
+          cors: true
+      - http:
+          path: /access
+          method: GET
+          cors: true
 
 resources:
   Resources:
@@ -57,6 +70,23 @@ resources:
           - AttributeName: id
             KeyType: HASH
           - AttributeName: username
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    accessTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${sls:stage}-roles
+        AttributeDefinitions:
+          - AttributeName: role
+            AttributeType: S
+          - AttributeName: quantity
+            AttributeType: 'N'
+        KeySchema:
+          - AttributeName: role
+            KeyType: HASH
+          - AttributeName: quantity
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
