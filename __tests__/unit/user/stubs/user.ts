@@ -1,5 +1,5 @@
-import { AuthUserParams } from '../../functions/useCases'
-import { User } from '../../functions/user'
+import { AuthUserParams } from '../../../../functions/userLambda/useCases'
+import { User } from '../../../../functions/userLambda/user'
 
 export const addUserStub: Partial<User> = {
   username: 'any_username',

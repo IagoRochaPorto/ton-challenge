@@ -48,6 +48,6 @@ exports.handler = async function (event: APIGatewayEvent, _context: Context, cal
       return
     }
 
-    callback(null, { statusCode: 500, body: JSON.stringify({ message: error.message }) })
+    callback(error, { statusCode: 500, body: JSON.stringify({ message: 'Internal server error' }) })
   }
 }

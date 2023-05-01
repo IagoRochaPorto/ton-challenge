@@ -1,8 +1,8 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
-import { AuthUserParams, authUser } from '../../functions/useCases'
 import { authUserStub } from '../stubs/user'
 import * as Bcrypt from 'bcryptjs'
-import { BadRequestError } from '../../functions/errors'
+import { AuthUserParams, authUser } from '../../../../functions/userLambda/useCases'
+import { BadRequestError } from '../../../../functions/userLambda/errors'
 
 const config = {
   endpoint: 'http://localhost:8000',

@@ -1,6 +1,6 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
-import { getUsers } from '../../functions/useCases'
-import { NotFoundError } from '../../functions/errors'
+import { getUsers } from '../../../../functions/userLambda/useCases'
+import { NotFoundError } from '../../../../functions/userLambda/errors'
 
 const config = {
   endpoint: 'http://localhost:8000',
