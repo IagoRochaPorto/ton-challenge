@@ -2,7 +2,13 @@ import { DynamoDB, ScanCommandInput } from '@aws-sdk/client-dynamodb'
 import { User } from '../user'
 import { NotFoundError } from '../errors'
 
-export async function getUsers(stage: string, db: DynamoDB): Promise<Pick<User, 'username'>[]> {
+type GetUsersParams = {
+  stage: string
+  db: DynamoDB
+}
+
+export async function getUsers(params: GetUsersParams): Promise<Pick<User, 'username'>[]> {
+  const { db, stage } = params
   let options: ScanCommandInput = {
     TableName: `${stage}-users`,
     ProjectionExpression: 'username',

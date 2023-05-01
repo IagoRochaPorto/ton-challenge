@@ -25,7 +25,7 @@ exports.handler = async function (event: APIGatewayEvent, _context: Context, cal
             username: parsedBody.username,
             password: queryStringParameters?.password,
           }
-          const authenticatedUser = await authUser(stage, db, user)
+          const authenticatedUser = await authUser({ stage, db, user })
           callback(null, { statusCode: 200, body: JSON.stringify(authenticatedUser) })
         }
         if (path === '/user') {
@@ -34,13 +34,13 @@ exports.handler = async function (event: APIGatewayEvent, _context: Context, cal
             username: parsedBody.username,
             password: parsedBody.password,
           }
-          const createdUser = await addUser(stage, db, { user: parsedUser })
+          const createdUser = await addUser({ stage, db, user: parsedUser })
           callback(null, { statusCode: 201, body: JSON.stringify(createdUser) })
         }
         break
 
       case 'GET':
-        const users = await getUsers(stage, db)
+        const users = await getUsers({ stage, db })
         callback(null, { statusCode: 200, body: JSON.stringify(users) })
         break
       default:

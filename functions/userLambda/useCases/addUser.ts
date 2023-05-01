@@ -6,10 +6,12 @@ import { BadRequestError, NotFoundError } from '../errors'
 
 type AddUserParams = {
   user: Partial<Omit<User, 'id'>>
+  stage: string
+  db: DynamoDB
 }
 
-export async function addUser(stage: string, db: DynamoDB, params: AddUserParams): Promise<Partial<User>> {
-  const { user } = params
+export async function addUser(params: AddUserParams): Promise<Partial<User>> {
+  const { db, stage, user } = params
   const isUser = validate(user)
 
   if (!isUser) {

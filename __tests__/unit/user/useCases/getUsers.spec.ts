@@ -19,7 +19,8 @@ jest.mock('@aws-sdk/client-dynamodb', () => ({
 
 function makeSut() {
   const db = new DynamoDB(config)
-  const sut = () => getUsers('test', db)
+  const stage = 'test'
+  const sut = () => getUsers({ stage, db })
   return { sut, db }
 }
 

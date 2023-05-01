@@ -1,7 +1,12 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
-import { BadRequestError } from '../errors'
 
-export async function getAccesses(stage: string, db: DynamoDB) {
+type GetAccessesParams = {
+  stage: string
+  db: DynamoDB
+}
+
+export async function getAccesses(params: GetAccessesParams) {
+  const { db, stage } = params
   const { Items: accesses } = await db.scan({
     TableName: `${stage}-roles`,
     ProjectionExpression: 'quantity',

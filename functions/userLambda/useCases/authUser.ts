@@ -3,9 +3,14 @@ import { User } from '../user'
 import { compareSync } from 'bcryptjs'
 import { BadRequestError, NotFoundError, UnauthorizedError } from '../errors'
 
-export type AuthUserParams = Partial<Pick<User, 'username' | 'password'>>
+export type AuthUserParams = {
+  user: Partial<Pick<User, 'username' | 'password'>>
+  stage: string
+  db: DynamoDB
+}
 
-export async function authUser(stage: string, db: DynamoDB, user: AuthUserParams) {
+export async function authUser(params: AuthUserParams) {
+  const { db, stage, user } = params
   if (!user.password) {
     throw new BadRequestError('Missing password')
   }

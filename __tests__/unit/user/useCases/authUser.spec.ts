@@ -32,7 +32,8 @@ jest.mock('bcryptjs', () => ({
 
 function makeSut() {
   const db = new DynamoDB(config)
-  const sut = (user: AuthUserParams) => authUser('test', db, user)
+  const stage = 'test'
+  const sut = (user: AuthUserParams['user']) => authUser({ stage, db, user })
   return { db, sut }
 }
 

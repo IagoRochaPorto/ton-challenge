@@ -1,8 +1,7 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { APIGatewayEvent, Callback, Context } from 'aws-lambda'
 import { BadRequestError, NotFoundError } from './errors'
-import { incrementAccesses } from './useCases'
-import { getAccesses } from './useCases/getAccesses'
+import { incrementAccesses, getAccesses } from './useCases'
 
 const db = new DynamoDB({
   region: process.env.AWS_CUSTOM_REGION,
@@ -24,14 +23,19 @@ exports.handler = async function (event: APIGatewayEvent, _context: Context, cal
           throw new BadRequestError('Missing increment')
         }
 
-        await incrementAccesses(stage, db, parsedBody.increment)
+        await incrementAccesses({
+          stage,
+          db,
+          increment: parsedBody.increment,
+        })
+
         callback(null, {
           statusCode: 201,
           body: JSON.stringify({ message: 'Accesses incremented' }),
         })
         break
       case 'GET':
-        const accesses = await getAccesses(stage, db)
+        const accesses = await getAccesses({ stage, db })
         callback(null, { statusCode: 200, body: JSON.stringify(accesses) })
         break
       default:

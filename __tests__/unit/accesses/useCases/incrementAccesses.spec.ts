@@ -25,7 +25,8 @@ jest.mock('@aws-sdk/client-dynamodb', () => ({
 
 function makeSut() {
   const db = new DynamoDB(config)
-  const sut = (accesses: number) => incrementAccesses('test', db, accesses)
+  const stage = 'test'
+  const sut = (increment: number) => incrementAccesses({ stage, db, increment })
   return { sut, db }
 }
 

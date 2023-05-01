@@ -1,3 +1,4 @@
+import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { AuthUserParams } from '../../../../functions/userLambda/useCases'
 import { User } from '../../../../functions/userLambda/user'
 
@@ -14,7 +15,7 @@ export const userStub: User = {
   password: 'any_hash',
 }
 
-export const authUserStub: AuthUserParams = {
+export const authUserStub: AuthUserParams['user'] = {
   username: 'any_username',
   password: 'any_password',
 }
