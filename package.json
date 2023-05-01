@@ -22,7 +22,6 @@
     "serverless": "^3.30.1",
     "serverless-auto-swagger": "^2.12.0",
     "serverless-dotenv-plugin": "^6.0.0",
-    "serverless-dynamodb-local": "^0.2.40",
     "serverless-offline": "^12.0.4",
     "serverless-plugin-typescript": "^2.1.4",
     "supertest": "^6.3.3",

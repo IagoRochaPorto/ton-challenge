@@ -119,5 +119,4 @@ plugins:
   - serverless-plugin-typescript
   - serverless-offline
   - serverless-dotenv-plugin
-  - serverless-dynamodb-local
   - serverless-auto-swagger

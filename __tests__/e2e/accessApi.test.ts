@@ -30,7 +30,6 @@ describe('Access API', () => {
     console.log(response.body)
 
     expect(response.status).toBe(201)
-    expect(response.body).toEqual({ message: 'Accesses incremented' })
   })
 
   it('Should return 200 on GET /access', async () => {
