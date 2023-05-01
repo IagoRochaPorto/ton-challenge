@@ -1,14 +1,13 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 
 export async function incrementAccesses(stage: string, db: DynamoDB, increment: number) {
-  const { Item: access } = await db.getItem({
-    TableName: `${stage}-accesses`,
-    Key: { role: { S: 'accesses' } },
-  })
+  const { Items } = await db.scan({ TableName: `${stage}-roles` })
+  const accessDocument = Items?.find((item) => item.role.S === 'accesses')
+  const accessAlreadyExists = !!accessDocument?.role?.S
 
-  if (!access) {
+  if (!accessAlreadyExists) {
     await db.putItem({
-      TableName: `${stage}-accesses`,
+      TableName: `${stage}-roles`,
       Item: {
         role: { S: 'accesses' },
         quantity: { N: increment.toString() },
@@ -16,7 +15,7 @@ export async function incrementAccesses(stage: string, db: DynamoDB, increment: 
     })
   } else {
     await db.updateItem({
-      TableName: `${stage}-accesses`,
+      TableName: `${stage}-roles`,
       Key: { role: { S: 'accesses' } },
       UpdateExpression: 'ADD quantity :increment',
       ExpressionAttributeValues: {
@@ -24,4 +23,6 @@ export async function incrementAccesses(stage: string, db: DynamoDB, increment: 
       },
     })
   }
+
+  return { accesses: increment }
 }
