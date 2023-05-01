@@ -4,7 +4,10 @@ import { addUser, authUser, getUsers } from './useCases'
 import { BadRequestError, NotFoundError, UnauthorizedError } from './errors'
 import { User } from './user'
 
-const db = new DynamoDB({ region: process.env.AWS_REGION })
+const db = new DynamoDB({
+  region: process.env.AWS_CUSTOM_REGION,
+  endpoint: process.env.AWS_CUSTOM_ENDPOINT,
+})
 
 exports.handler = async function (event: APIGatewayEvent, _context: Context, callback: Callback) {
   try {
@@ -37,7 +40,7 @@ exports.handler = async function (event: APIGatewayEvent, _context: Context, cal
         break
 
       case 'GET':
-        const users = await getUsers({ db, stage })
+        const users = await getUsers(stage, db)
         callback(null, { statusCode: 200, body: JSON.stringify(users) })
         break
       default:
