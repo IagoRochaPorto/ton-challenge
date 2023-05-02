@@ -3,6 +3,7 @@ import { User } from '../user'
 import { randomUUID } from 'node:crypto'
 import { hashSync } from 'bcryptjs'
 import { BadRequestError, NotFoundError } from '../errors'
+import validator from 'validator'
 
 type AddUserParams = {
   user: Partial<Omit<User, 'id'>>
@@ -16,6 +17,17 @@ export async function addUser(params: AddUserParams): Promise<Partial<User>> {
 
   if (!isUser) {
     throw new BadRequestError('Invalid user')
+  }
+
+  const isEmailValid = validator.isEmail(user.email)
+  const isPasswordSecure = validator.isStrongPassword(user.password)
+
+  if (!isEmailValid) {
+    throw new BadRequestError('Invalid email')
+  }
+
+  if (!isPasswordSecure) {
+    throw new BadRequestError('Password is not secure')
   }
 
   const hashedPassword = hashSync(user.password, 12)
