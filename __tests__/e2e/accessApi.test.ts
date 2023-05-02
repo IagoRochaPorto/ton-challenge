@@ -16,8 +16,6 @@ describe('Access API', () => {
   it('Should return 200 on GET /access', async () => {
     const response = await server.get('/dev/access')
 
-    console.log(response.body)
-
     expect(response.status).toBe(200)
     expect(response.body).toEqual({ accesses: 0 })
   })
@@ -27,15 +25,11 @@ describe('Access API', () => {
       increment: 2,
     })
 
-    console.log(response.body)
-
     expect(response.status).toBe(201)
   })
 
   it('Should return 200 on GET /access', async () => {
     const response = await server.get('/dev/access')
-
-    console.log(response.body)
 
     expect(response.status).toBe(200)
     expect(response.body).toEqual({ accesses: 2 })

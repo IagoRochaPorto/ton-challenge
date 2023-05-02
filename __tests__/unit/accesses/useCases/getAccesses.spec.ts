@@ -24,9 +24,6 @@ function makeSut() {
 }
 
 describe('Get accesses use case', () => {
-  beforeAll(async () => {
-    console.log('here')
-  })
   it('Should call DynamoDB scan with correct params', async () => {
     const { db, sut } = makeSut()
     const scan = jest.spyOn(db, 'scan')
