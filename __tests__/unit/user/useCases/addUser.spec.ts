@@ -3,6 +3,7 @@ import { addUserStub } from '../stubs/user'
 import { User } from '../../../../functions/userLambda/user'
 import { addUser } from '../../../../functions/userLambda/useCases'
 import { BadRequestError, NotFoundError } from '../../../../functions/userLambda/errors'
+import validator from 'validator'
 
 const config = {
   endpoint: 'http://localhost:8000',
@@ -36,6 +37,11 @@ jest.mock('bcryptjs', () => ({
   hashSync: jest.fn().mockReturnValue('any_hash'),
 }))
 
+jest.mock('validator', () => ({
+  isEmail: jest.fn().mockReturnValue(true),
+  isStrongPassword: jest.fn().mockReturnValue(true),
+}))
+
 function makeSut() {
   const db = new DynamoDB(config)
   const stage = 'test'
@@ -67,6 +73,24 @@ describe('Add User Use Case', () => {
         password: { S: 'any_hash' },
       },
     })
+  })
+
+  it('Should throw Validation Errors if email is invalid', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(validator, 'isEmail').mockReturnValueOnce(false)
+
+    const promise = sut(addUserStub)
+
+    await expect(promise).rejects.toThrow(new BadRequestError('Invalid email'))
+  })
+
+  it('Should throw Validation Errors if password is not secure', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(validator, 'isStrongPassword').mockReturnValueOnce(false as any)
+
+    const promise = sut(addUserStub)
+
+    await expect(promise).rejects.toThrow(new BadRequestError('Password is not secure'))
   })
 
   it('Should throw NotFoundError if user is not found', async () => {
