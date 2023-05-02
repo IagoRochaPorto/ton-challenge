@@ -31,6 +31,7 @@ As rotas criadas estão descritas mais detalhadamente no swagger, que são as se
 ## Dependências de produção
 
 - "bcryptjs" para encriptar e validar a senha do usuário
+- "validator" para validar formato do email e fortitude da senha
 
 ## Dependências de desenvolvimento
 
