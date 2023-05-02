@@ -83,3 +83,12 @@ Rodar o seguinte comando no terminal:
 `sls deploy --stage prod`
 
 Ao finalizar a execução o serverless irá exibir as rotas disponíveis para o acesso através da AWS
+
+## Rotas rodando na AWS:
+  [POST] /user - https://zme9rb2l23.execute-api.us-east-1.amazonaws.com/dev/user
+  [POST] /auth - https://zme9rb2l23.execute-api.us-east-1.amazonaws.com/dev/auth
+  [GET]  /user - https://zme9rb2l23.execute-api.us-east-1.amazonaws.com/dev/user
+  [POST] /access - https://zme9rb2l23.execute-api.us-east-1.amazonaws.com/dev/access
+  [GET]  /access - https://zme9rb2l23.execute-api.us-east-1.amazonaws.com/dev/access
+  [GET]  /swagger - https://ma0roicd4d.execute-api.us-east-1.amazonaws.com/swagger
+  [GET]  /swagger.json - https://ma0roicd4d.execute-api.us-east-1.amazonaws.com/swagger.json
