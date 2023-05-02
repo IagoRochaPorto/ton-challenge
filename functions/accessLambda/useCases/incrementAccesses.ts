@@ -8,13 +8,13 @@ type IncrementAccessesParams = {
 
 export async function incrementAccesses(params: IncrementAccessesParams) {
   const { db, stage, increment } = params
-  const { Items } = await db.scan({ TableName: `${stage}-roles` })
+  const { Items } = await db.scan({ TableName: `${stage}-flow-control` })
   const accessDocument = Items?.find((item) => item.role.S === 'accesses')
   const accessAlreadyExists = !!accessDocument?.role?.S
 
   if (!accessAlreadyExists) {
     await db.putItem({
-      TableName: `${stage}-roles`,
+      TableName: `${stage}-flow-control`,
       Item: {
         role: { S: 'accesses' },
         quantity: { N: increment.toString() },
@@ -22,7 +22,7 @@ export async function incrementAccesses(params: IncrementAccessesParams) {
     })
   } else {
     await db.updateItem({
-      TableName: `${stage}-roles`,
+      TableName: `${stage}-flow-control`,
       Key: { role: { S: 'accesses' } },
       UpdateExpression: 'ADD quantity :increment',
       ExpressionAttributeValues: {

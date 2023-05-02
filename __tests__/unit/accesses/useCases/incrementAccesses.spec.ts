@@ -38,7 +38,7 @@ describe('Increment accesses use case', () => {
     await sut(1)
 
     expect(scan).toHaveBeenCalledWith({
-      TableName: 'test-roles',
+      TableName: 'test-flow-control',
     })
   })
 
@@ -49,7 +49,7 @@ describe('Increment accesses use case', () => {
     await sut(2)
 
     expect(updateItemSpy).toHaveBeenCalledWith({
-      TableName: 'test-roles',
+      TableName: 'test-flow-control',
       Key: { role: { S: 'accesses' } },
       UpdateExpression: 'ADD quantity :increment',
       ExpressionAttributeValues: {
@@ -66,7 +66,7 @@ describe('Increment accesses use case', () => {
     await sut(3)
 
     expect(putItemSpy).toHaveBeenCalledWith({
-      TableName: 'test-roles',
+      TableName: 'test-flow-control',
       Item: {
         role: { S: 'accesses' },
         quantity: { N: '3' },

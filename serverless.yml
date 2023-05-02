@@ -1,4 +1,4 @@
-service: sls-my-first-service
+service: code-challenge
 useDotenv: true
 
 provider:
@@ -21,7 +21,7 @@ provider:
         - dynamodb:DeleteItem
       Resource:
         - { 'Fn::GetAtt': ['usersTable', 'Arn'] }
-        - { 'Fn::GetAtt': ['accessTable', 'Arn'] }
+        - { 'Fn::GetAtt': ['flowControlTable', 'Arn'] }
 
 functions:
   usersApi:
@@ -55,7 +55,6 @@ functions:
             '200':
               description: OK
               bodyType: 'GetUsersResponse'
-
   accessApi:
     name: ${sls:stage}-access-lambda
     handler: functions/accessLambda/accessApi.handler
@@ -93,10 +92,10 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-    accessTable:
+    flowControlTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${sls:stage}-roles
+        TableName: ${sls:stage}-flow-control
         AttributeDefinitions:
           - AttributeName: role
             AttributeType: S

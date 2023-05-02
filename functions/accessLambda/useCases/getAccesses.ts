@@ -8,7 +8,7 @@ type GetAccessesParams = {
 export async function getAccesses(params: GetAccessesParams) {
   const { db, stage } = params
   const { Items: accesses } = await db.scan({
-    TableName: `${stage}-roles`,
+    TableName: `${stage}-flow-control`,
     ProjectionExpression: 'quantity',
     FilterExpression: '#role = :roleName',
     ExpressionAttributeNames: {

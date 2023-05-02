@@ -34,7 +34,7 @@ describe('Get accesses use case', () => {
     await sut()
 
     expect(scan).toHaveBeenCalledWith({
-      TableName: `test-roles`,
+      TableName: `test-flow-control`,
       ProjectionExpression: 'quantity',
       FilterExpression: '#role = :roleName',
       ExpressionAttributeNames: {
