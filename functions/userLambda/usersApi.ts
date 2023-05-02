@@ -20,31 +20,34 @@ exports.handler = async function (event: APIGatewayEvent, _context: Context, cal
           throw new BadRequestError('Missing body')
         }
         const parsedBody = JSON.parse(body) as Partial<User>
-        if (path === '/auth') {
+
+        if (path.endsWith('/auth')) {
           const user = {
             username: parsedBody.username,
-            password: queryStringParameters?.password,
+            password: parsedBody?.password,
           }
           const authenticatedUser = await authUser({ stage, db, user })
           callback(null, { statusCode: 200, body: JSON.stringify(authenticatedUser) })
+          return
         }
-        if (path === '/user') {
+        if (path.endsWith('/user')) {
           const parsedUser = {
             email: parsedBody.email,
             username: parsedBody.username,
             password: parsedBody.password,
           }
           const createdUser = await addUser({ stage, db, user: parsedUser })
-          callback(null, { statusCode: 201, body: JSON.stringify(createdUser) })
+          callback(null, { statusCode: 200, body: JSON.stringify(createdUser) })
+          return
         }
         break
 
       case 'GET':
         const users = await getUsers({ stage, db })
         callback(null, { statusCode: 200, body: JSON.stringify({ users }) })
-        break
+        return
       default:
-        throw new BadRequestError('Invalid method')
+        callback(null, { statusCode: 200, body: JSON.stringify({ teste: 'a' }) })
     }
   } catch (error) {
     if (error instanceof BadRequestError) {
@@ -62,6 +65,6 @@ exports.handler = async function (event: APIGatewayEvent, _context: Context, cal
       return
     }
 
-    callback(error, { statusCode: 500, body: JSON.stringify({ message: 'Internal server error' }) })
+    callback(null, { statusCode: 500, body: JSON.stringify({ message: 'Internal server error' }) })
   }
 }
