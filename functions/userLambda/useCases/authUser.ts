@@ -1,6 +1,6 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { User } from '../user'
-import { compareSync } from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 import { BadRequestError, NotFoundError, UnauthorizedError } from '../errors'
 
 export type AuthUserParams = {
@@ -34,7 +34,7 @@ export async function authUser(params: AuthUserParams) {
     throw new BadRequestError('User not found')
   }
 
-  const isPasswordValid = compareSync(user.password, authenticatedUser.password.S)
+  const isPasswordValid = await bcrypt.compare(user.password, authenticatedUser.password.S)
 
   if (!isPasswordValid) {
     throw new UnauthorizedError('Invalid password')

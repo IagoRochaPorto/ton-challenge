@@ -1,6 +1,6 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { authUserStub } from '../stubs/user'
-import * as Bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 import { AuthUserParams, authUser } from '../../../../functions/userLambda/useCases'
 import { BadRequestError } from '../../../../functions/userLambda/errors'
 
@@ -27,7 +27,7 @@ jest.mock('@aws-sdk/client-dynamodb', () => ({
 }))
 
 jest.mock('bcryptjs', () => ({
-  compareSync: jest.fn().mockReturnValue(true),
+  compare: jest.fn().mockImplementation(() => Promise.resolve(true)),
 }))
 
 function makeSut() {
@@ -85,7 +85,7 @@ describe('Auth user use case', () => {
 
   it('Should throw an UnauthorizedError if password is invalid', async () => {
     const { sut } = makeSut()
-    jest.spyOn(Bcrypt, 'compareSync').mockReturnValueOnce(false)
+    jest.spyOn(bcrypt, 'compare').mockResolvedValueOnce(false as never)
 
     const promise = sut(authUserStub)
 

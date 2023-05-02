@@ -1,9 +1,9 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { User } from '../user'
 import { randomUUID } from 'node:crypto'
-import { hashSync } from 'bcryptjs'
 import { BadRequestError, NotFoundError } from '../errors'
 import validator from 'validator'
+import bcrypt from 'bcryptjs'
 
 type AddUserParams = {
   user: Partial<Omit<User, 'id'>>
@@ -30,7 +30,8 @@ export async function addUser(params: AddUserParams): Promise<Partial<User>> {
     throw new BadRequestError('Password is not secure')
   }
 
-  const hashedPassword = hashSync(user.password, 12)
+  const hashedPassword = await bcrypt.hash(user.password, 10)
+
   await db.putItem({
     TableName: `${stage}-users`,
     Item: {

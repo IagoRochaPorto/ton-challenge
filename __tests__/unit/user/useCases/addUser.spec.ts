@@ -34,7 +34,7 @@ jest.mock('node:crypto', () => ({
 }))
 
 jest.mock('bcryptjs', () => ({
-  hashSync: jest.fn().mockReturnValue('any_hash'),
+  hash: jest.fn().mockResolvedValue('any_hash'),
 }))
 
 jest.mock('validator', () => ({
