@@ -3,7 +3,7 @@ import request from 'supertest'
 describe('Users API', () => {
   const server = request('http://localhost:3000')
 
-  it('Should return 200 on POST /user', async () => {
+  it('Should return 201 on POST /user', async () => {
     const response = await server.post('/dev/user').send({
       username: 'john doe',
       password: 'zcDp%WDxs#j5e@B!X%hh@8',
