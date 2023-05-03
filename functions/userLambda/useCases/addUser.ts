@@ -1,7 +1,7 @@
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { User } from '../user'
 import { randomUUID } from 'node:crypto'
-import { BadRequestError, NotFoundError } from '../errors'
+import { BadRequestError } from '../errors'
 import validator from 'validator'
 import bcrypt from 'bcryptjs'
 
@@ -32,16 +32,6 @@ export async function addUser(params: AddUserParams): Promise<Partial<User>> {
 
   const hashedPassword = await bcrypt.hash(user.password, 10)
 
-  await db.putItem({
-    TableName: `${stage}-users`,
-    Item: {
-      id: { S: randomUUID() },
-      username: { S: user.username },
-      email: { S: user.email },
-      password: { S: hashedPassword },
-    },
-  })
-
   const { Items: users } = await db.scan({
     TableName: `${stage}-users`,
     FilterExpression: 'username = :username',
@@ -50,14 +40,26 @@ export async function addUser(params: AddUserParams): Promise<Partial<User>> {
     },
   })
 
-  if (!users?.length) {
-    throw new NotFoundError('User not found')
+  if (users?.length) {
+    throw new BadRequestError('User already exists')
   }
 
+  const userToCreate = {
+    id: { S: randomUUID() },
+    username: { S: user.username },
+    email: { S: user.email },
+    password: { S: hashedPassword },
+  }
+
+  await db.putItem({
+    TableName: `${stage}-users`,
+    Item: userToCreate,
+  })
+
   return {
-    id: users[0].id.S,
-    username: users[0].username.S,
-    email: users[0].email.S,
+    id: userToCreate.id.S,
+    username: userToCreate.username.S,
+    email: userToCreate.email.S,
   }
 }
 

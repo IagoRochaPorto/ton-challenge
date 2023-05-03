@@ -15,17 +15,7 @@ jest.mock('@aws-sdk/client-dynamodb', () => ({
     putItem: jest.fn().mockImplementation(() => ({
       promise: jest.fn().mockResolvedValue({}),
     })),
-    scan: jest.fn().mockImplementation(() =>
-      Promise.resolve({
-        Items: [
-          {
-            id: { S: 'any_uuid' },
-            username: { S: 'any_username' },
-            email: { S: 'any_email' },
-          },
-        ],
-      })
-    ),
+    scan: jest.fn().mockImplementation(() => Promise.resolve({ Items: null })),
   })),
 }))
 
@@ -93,13 +83,23 @@ describe('Add User Use Case', () => {
     await expect(promise).rejects.toThrow(new BadRequestError('Password is not secure'))
   })
 
-  it('Should throw NotFoundError if user is not found', async () => {
+  it('Should throw already exists if user is found', async () => {
     const { sut, db } = makeSut()
-    jest.spyOn(db, 'scan').mockImplementationOnce(() => Promise.resolve({ Items: null }))
+    jest.spyOn(db, 'scan').mockImplementationOnce(() =>
+      Promise.resolve({
+        Items: [
+          {
+            id: { S: 'any_uuid' },
+            username: { S: 'any_username' },
+            email: { S: 'any_email' },
+          },
+        ],
+      })
+    )
 
     const promise = sut(addUserStub)
 
-    await expect(promise).rejects.toThrow(new NotFoundError('User not found'))
+    await expect(promise).rejects.toThrow(new BadRequestError('User already exists'))
   })
 
   it('Should return a user if user is found', async () => {
