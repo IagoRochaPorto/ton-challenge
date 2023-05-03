@@ -37,7 +37,7 @@ exports.handler = async function (event: APIGatewayEvent, _context: Context, cal
             password: parsedBody.password,
           }
           const createdUser = await addUser({ stage, db, user: parsedUser })
-          callback(null, { statusCode: 200, body: JSON.stringify(createdUser) })
+          callback(null, { statusCode: 201, body: JSON.stringify(createdUser) })
           return
         }
         break

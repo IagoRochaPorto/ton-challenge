@@ -61,6 +61,14 @@ Não foi utilizada a biblioteca "dynamodb-local" por conta de falhas críticas d
 instalar o serverless globalmente com
   - `npm install -g serverless`
 
+## Testes unitários
+
+rodar `npm run test:unit`
+
+## Testes e2e
+
+rodar `npm run test:e2e`
+
 ## Como rodar em ambiente de desenvolvimento
 
 - Criar um arquivo `.env` preenchendo as variáveis de ambiente levando como exemplo o arquivo `.env.example`
